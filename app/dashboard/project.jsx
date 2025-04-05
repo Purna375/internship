@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import ReportIssue from "../report-issue/reportform";
 import { Button } from "@/components/ui/button";
+import ProjectDetails from "../project-details/projectform";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -67,21 +68,18 @@ export default function Dashboard() {
       id: 1,
       title: "Fix login bug",
       project: "AI Assistant",
-      priority: "High",
       status: "Open",
     },
     {
       id: 2,
       title: "Update documentation",
       project: "Web App",
-      priority: "Medium",
       status: "Open",
     },
     {
       id: 3,
       title: "Performance optimization",
       project: "Blockchain Project",
-      priority: "Low",
       status: "Closed",
     },
     {
@@ -145,10 +143,10 @@ export default function Dashboard() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    router.push("/project-details");
-  };
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   router.push("/project-details");
+  // };
 
   const handleEditClick = (project) => {
     setSelectedProject(project);
@@ -413,12 +411,11 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Dashboard Content - Projects Section */}
         {activeSection === "projects" && (
           <div className="p-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 space-y-4 md:space-y-0">
               <button
-                onClick={handleSubmit}
+                onClick={() => changeSection("projects", "newproject")}
                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
               >
                 Add New Project
@@ -454,95 +451,98 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Projects Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredProjects.map((project) => (
-                <div
-                  key={project.id}
-                  className="relative p-4 shadow-lg rounded-lg bg-white dark:bg-gray-800"
-                >
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                    {project.name}
-                  </h2>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-                    Domain: {project.domain}
-                  </p>
-                  <div className="flex items-center mb-1">
-                    <span
-                      className={`w-3 h-3 mr-2 rounded-full ${
-                        statusStyles[project.status]
-                      } animate-pulse`}
-                    ></span>
-                    <p className="text-gray-700 dark:text-gray-300">
-                      {project.status}
+            {activeSubSection === "newproject" ? (
+              <ProjectDetails />
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredProjects.map((project) => (
+                  <div
+                    key={project.id}
+                    className="relative p-4 shadow-lg rounded-lg bg-white dark:bg-gray-800"
+                  >
+                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                      {project.name}
+                    </h2>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                      Domain: {project.domain}
                     </p>
-                  </div>
+                    <div className="flex items-center mb-1">
+                      <span
+                        className={`w-3 h-3 mr-2 rounded-full ${
+                          statusStyles[project.status]
+                        } animate-pulse`}
+                      ></span>
+                      <p className="text-gray-700 dark:text-gray-300">
+                        {project.status}
+                      </p>
+                    </div>
 
-                  {/* Edit Icon */}
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <button
-                        onClick={() => handleEditClick(project)}
-                        className="absolute top-2 right-2 text-gray-500 hover:text-blue-600"
-                      >
-                        <Pencil size={18} />
-                      </button>
-                    </AlertDialogTrigger>
-                    {selectedProject?.id === project.id && (
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Edit Domain</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            You can update the domain for{" "}
-                            <strong>{selectedProject.name}</strong>.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
+                    {/* Edit Icon */}
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <button
+                          onClick={() => handleEditClick(project)}
+                          className="absolute top-2 right-2 text-gray-500 hover:text-blue-600"
+                        >
+                          <Pencil size={18} />
+                        </button>
+                      </AlertDialogTrigger>
+                      {selectedProject?.id === project.id && (
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Edit Domain</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              You can update the domain for{" "}
+                              <strong>{selectedProject.name}</strong>.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
 
-                        <div className="mt-4 space-y-2">
-                          <div className="text-sm text-gray-600 dark:text-gray-300">
-                            <strong>Project Name:</strong>{" "}
-                            {selectedProject.name}
+                          <div className="mt-4 space-y-2">
+                            <div className="text-sm text-gray-600 dark:text-gray-300">
+                              <strong>Project Name:</strong>{" "}
+                              {selectedProject.name}
+                            </div>
+
+                            <Select
+                              value={newDomain}
+                              onValueChange={handleDomainChange}
+                            >
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select a domain" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="Artificial Intelligence">
+                                  Artificial Intelligence
+                                </SelectItem>
+                                <SelectItem value="Web Development">
+                                  Web Development
+                                </SelectItem>
+                                <SelectItem value="Blockchain">
+                                  Blockchain
+                                </SelectItem>
+                                <SelectItem value="Full Stack">
+                                  Full Stack
+                                </SelectItem>
+                                <SelectItem value="Data Science">
+                                  Data Science
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
                           </div>
 
-                          <Select
-                            value={newDomain}
-                            onValueChange={handleDomainChange}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select a domain" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Artificial Intelligence">
-                                Artificial Intelligence
-                              </SelectItem>
-                              <SelectItem value="Web Development">
-                                Web Development
-                              </SelectItem>
-                              <SelectItem value="Blockchain">
-                                Blockchain
-                              </SelectItem>
-                              <SelectItem value="Full Stack">
-                                Full Stack
-                              </SelectItem>
-                              <SelectItem value="Data Science">
-                                Data Science
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={handleSave}>
-                            Save
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    )}
-                  </AlertDialog>
-                </div>
-              ))}
-            </div>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleSave}>
+                              Save
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      )}
+                    </AlertDialog>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
@@ -551,16 +551,21 @@ export default function Dashboard() {
           <div className="p-6">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-lg font-semibold">
-              {activeSubSection === "open"
-          ? "Open Tickets"
-          : activeSubSection === "closed"
-          ? "Closed Tickets"
-          : activeSubSection === "report"
-          ? "Report Issue"
-          : ""}
+                {activeSubSection === "open"
+                  ? "Open Tickets"
+                  : activeSubSection === "closed"
+                  ? "Closed Tickets"
+                  : activeSubSection === "report"
+                  ? "Report Issue"
+                  : ""}
               </h2>
               <div className="flex space-x-4">
-
+                <button
+                  onClick={() => changeSection("reports", "report")}
+                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                  Report Issue
+                </button>
                 <button
                   onClick={() => changeSection("reports", "open")}
                   className={`px-4 py-2 rounded ${
@@ -583,66 +588,60 @@ export default function Dashboard() {
                 </button>
               </div>
             </div>
-            {/* Tickets Table */}
-            <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-700">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      ID
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Title
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Project
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Priority
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Status
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                  {filteredTickets.map((ticket) => (
-                    <tr key={ticket.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                        #{ticket.id}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                        {ticket.title}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
-                        {ticket.project}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`px-2 py-1 text-xs rounded-full ${
-                            priorityStyles[ticket.priority]
-                          }`}
-                        >
-                          {ticket.priority}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="flex items-center">
-                          <span
-                            className={`w-2 h-2 mr-2 rounded-full ${
-                              statusStyles[ticket.status]
-                            }`}
-                          ></span>
-                          <span className="text-sm text-gray-700 dark:text-gray-300">
-                            {ticket.status}
-                          </span>
-                        </span>
-                      </td>
+            {/* Main Content Section */}
+
+            {activeSubSection === "report" ? (
+              <ReportIssue />
+            ) : (
+              <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                  <thead className="bg-gray-50 dark:bg-gray-700">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        ID
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Title
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Project
+                      </th>
+                     
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Status
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    {filteredTickets.map((ticket) => (
+                      <tr key={ticket.id}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                          #{ticket.id}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                          {ticket.title}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
+                          {ticket.project}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className="flex items-center">
+                            <span
+                              className={`w-2 h-2 mr-2 rounded-full ${
+                                statusStyles[ticket.status]
+                              }`}
+                            ></span>
+                            <span className="text-sm text-gray-700 dark:text-gray-300">
+                              {ticket.status}
+                            </span>
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         )}
 
