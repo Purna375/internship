@@ -31,8 +31,8 @@ import {
   TicketCheck,
 } from "lucide-react";
 import ReportIssue from "../report-issue/reportform";
-import { Button } from "@/components/ui/button";
 import ProjectDetails from "../project-details/projectform";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -181,17 +181,17 @@ export default function Dashboard() {
     "Payment Completed": "bg-green-500",
     Rejected: "bg-red-500",
     Open: "bg-green-500",
-    Closed: "bg-gray-500",
+    Closed: "bg-orange-500",
     Pending: "bg-yellow-500",
     Completed: "bg-green-500",
   };
 
-  const priorityStyles = {
-    Low: "bg-blue-100 text-blue-800",
-    Medium: "bg-yellow-100 text-yellow-800",
-    High: "bg-orange-100 text-orange-800",
-    Critical: "bg-red-100 text-red-800",
-  };
+  // const priorityStyles = {
+  //   Low: "bg-blue-100 text-blue-800",
+  //   Medium: "bg-yellow-100 text-yellow-800",
+  //   High: "bg-orange-100 text-orange-800",
+  //   Critical: "bg-red-100 text-red-800",
+  // };
 
   // Filter projects based on search and status
   const filteredProjects = projects.filter((project) => {
@@ -407,8 +407,11 @@ export default function Dashboard() {
               {activeSection === "projects" && "Project Dashboard"}
               {activeSection === "reports" && "Ticket Reports"}
               {activeSection === "payments" && "Payment Management"}
+            
             </h1>
+           
           </div>
+          <span className="relative -top-7"><ThemeToggle/></span>
         </div>
 
         {activeSection === "projects" && (
@@ -452,7 +455,11 @@ export default function Dashboard() {
             </div>
 
             {activeSubSection === "newproject" ? (
-              <ProjectDetails />
+              <div className="p-4 sm:p-6 md:p-8 lg:p-10">
+              <div className="max-w-2xl mx-auto">
+                <ProjectDetails />
+              </div>
+            </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredProjects.map((project) => (
@@ -581,7 +588,7 @@ export default function Dashboard() {
                   className={`px-4 py-2 rounded ${
                     activeSubSection === "closed"
                       ? "bg-gray-600 text-white"
-                      : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+                      : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
                   }`}
                 >
                   Closed
@@ -594,6 +601,7 @@ export default function Dashboard() {
               <ReportIssue />
             ) : (
               <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+                <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                   <thead className="bg-gray-50 dark:bg-gray-700">
                     <tr>
@@ -640,6 +648,7 @@ export default function Dashboard() {
                     ))}
                   </tbody>
                 </table>
+                </div>
               </div>
             )}
           </div>
