@@ -126,12 +126,33 @@ function RegisterForm() {
     }
   };
 
-  const handleGetOtp = () => {
-    setShowOtpFields(true);
-    setShowOtpMessage(true);
-    setOtpTimer(30); // Start 30s timer
+  const handleGetOtp = async () => {
+    try {
+      const response = await fetch("/api/send-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+        }),
+      });
+      setOtpTimer(30); 
+      const data = await response.json();
+  
+      if (response.ok) {
+        setShowOtpFields(true);
+        setShowOtpMessage(true);
+        console.log("OTP sent:", data.message); 
+      } else {
+        console.error("Failed to send OTP:", data.message);
+  
+      }
+    } catch (error) {
+      console.error("Error sending OTP:", error);
+    }
   };
-
+  
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
