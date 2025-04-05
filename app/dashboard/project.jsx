@@ -2,9 +2,36 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Menu, Pencil, X, Search, ChevronDown, Filter, CircleDollarSign, TicketCheck } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import {
+  Menu,
+  Pencil,
+  X,
+  Search,
+  ChevronDown,
+  Filter,
+  CircleDollarSign,
+  TicketCheck,
+} from "lucide-react";
+import ReportIssue from "../report-issue/reportform";
+import { Button } from "@/components/ui/button";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -14,24 +41,87 @@ export default function Dashboard() {
   const [isMobile, setIsMobile] = useState(false);
 
   const [projects, setProjects] = useState([
-    { id: 1, name: "AI Assistant", domain: "Artificial Intelligence", status: "Pending Acceptance" },
-    { id: 2, name: "Web App", domain: "Full Stack", status: "Accepted & Payment Pending" },
-    { id: 3, name: "Blockchain Project", domain: "Blockchain", status: "Payment Completed" },
+    {
+      id: 1,
+      name: "AI Assistant",
+      domain: "Artificial Intelligence",
+      status: "Pending Acceptance",
+    },
+    {
+      id: 2,
+      name: "Web App",
+      domain: "Full Stack",
+      status: "Accepted & Payment Pending",
+    },
+    {
+      id: 3,
+      name: "Blockchain Project",
+      domain: "Blockchain",
+      status: "Payment Completed",
+    },
     { id: 4, name: "ML Project", domain: "AIML", status: "Rejected" },
   ]);
 
   const [tickets, setTickets] = useState([
-    { id: 1, title: "Fix login bug", project: "AI Assistant", priority: "High", status: "Open" },
-    { id: 2, title: "Update documentation", project: "Web App", priority: "Medium", status: "Open" },
-    { id: 3, title: "Performance optimization", project: "Blockchain Project", priority: "Low", status: "Closed" },
-    { id: 4, title: "Security audit", project: "ML Project", priority: "Critical", status: "Closed" },
+    {
+      id: 1,
+      title: "Fix login bug",
+      project: "AI Assistant",
+      priority: "High",
+      status: "Open",
+    },
+    {
+      id: 2,
+      title: "Update documentation",
+      project: "Web App",
+      priority: "Medium",
+      status: "Open",
+    },
+    {
+      id: 3,
+      title: "Performance optimization",
+      project: "Blockchain Project",
+      priority: "Low",
+      status: "Closed",
+    },
+    {
+      id: 4,
+      title: "Security audit",
+      project: "ML Project",
+      priority: "Critical",
+      status: "Closed",
+    },
   ]);
 
   const [payments, setPayments] = useState([
-    { id: 1, project: "AI Assistant", amount: 3500, date: "2025-02-15", status: "Pending" },
-    { id: 2, project: "Web App", amount: 2800, date: "2025-01-30", status: "Completed" },
-    { id: 3, project: "Blockchain Project", amount: 5000, date: "2025-03-10", status: "Completed" },
-    { id: 4, project: "ML Project", amount: 4200, date: "2025-03-28", status: "Pending" },
+    {
+      id: 1,
+      project: "AI Assistant",
+      amount: 3500,
+      date: "2025-02-15",
+      status: "Pending",
+    },
+    {
+      id: 2,
+      project: "Web App",
+      amount: 2800,
+      date: "2025-01-30",
+      status: "Completed",
+    },
+    {
+      id: 3,
+      project: "Blockchain Project",
+      amount: 5000,
+      date: "2025-03-10",
+      status: "Completed",
+    },
+    {
+      id: 4,
+      project: "ML Project",
+      amount: 4200,
+      date: "2025-03-28",
+      status: "Pending",
+    },
   ]);
 
   const [selectedProject, setSelectedProject] = useState(null);
@@ -91,41 +181,44 @@ export default function Dashboard() {
     "Pending Acceptance": "bg-yellow-500",
     "Accepted & Payment Pending": "bg-blue-500",
     "Payment Completed": "bg-green-500",
-    "Rejected": "bg-red-500",
-    "Open": "bg-green-500",
-    "Closed": "bg-gray-500",
-    "Pending": "bg-yellow-500",
-    "Completed": "bg-green-500",
+    Rejected: "bg-red-500",
+    Open: "bg-green-500",
+    Closed: "bg-gray-500",
+    Pending: "bg-yellow-500",
+    Completed: "bg-green-500",
   };
 
   const priorityStyles = {
-    "Low": "bg-blue-100 text-blue-800",
-    "Medium": "bg-yellow-100 text-yellow-800",
-    "High": "bg-orange-100 text-orange-800",
-    "Critical": "bg-red-100 text-red-800",
+    Low: "bg-blue-100 text-blue-800",
+    Medium: "bg-yellow-100 text-yellow-800",
+    High: "bg-orange-100 text-orange-800",
+    Critical: "bg-red-100 text-red-800",
   };
 
   // Filter projects based on search and status
-  const filteredProjects = projects.filter(project => {
-    const matchesSearch = project.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          project.domain.toLowerCase().includes(searchQuery.toLowerCase());
-    
+  const filteredProjects = projects.filter((project) => {
+    const matchesSearch =
+      project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      project.domain.toLowerCase().includes(searchQuery.toLowerCase());
+
     if (activeSubSection === "all") return matchesSearch;
-    if (activeSubSection === "accepted") return matchesSearch && project.status.includes("Accepted");
-    if (activeSubSection === "rejected") return matchesSearch && project.status === "Rejected";
-    
+    if (activeSubSection === "accepted")
+      return matchesSearch && project.status.includes("Accepted");
+    if (activeSubSection === "rejected")
+      return matchesSearch && project.status === "Rejected";
+
     return matchesSearch;
   });
 
   // Filter tickets based on status
-  const filteredTickets = tickets.filter(ticket => {
+  const filteredTickets = tickets.filter((ticket) => {
     if (activeSubSection === "all") return true;
     if (activeSubSection === "open") return ticket.status === "Open";
     if (activeSubSection === "closed") return ticket.status === "Closed";
     return true;
   });
 
-  const filteredPayments = payments.filter(payment => {
+  const filteredPayments = payments.filter((payment) => {
     if (activeSubSection === "all") return true;
     if (activeSubSection === "past") return payment.status === "Completed";
     if (activeSubSection === "pending") return payment.status === "Pending";
@@ -134,11 +227,20 @@ export default function Dashboard() {
 
   return (
     <div className="flex h-screen bg-gray-100 dark:bg-gray-900 w-full">
-      <div className={`fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 shadow transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:translate-x-0 md:relative`}>
+      <div
+        className={`fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 shadow transform ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } transition-transform duration-300 ease-in-out md:translate-x-0 md:relative`}
+      >
         <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
-          <h2 className="text-xl font-bold text-gray-800 dark:text-white">Dashboard</h2>
+          <h2 className="text-xl font-bold text-gray-800 dark:text-white">
+            Dashboard
+          </h2>
           {isMobile && (
-            <button onClick={toggleSidebar} className="md:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white">
+            <button
+              onClick={toggleSidebar}
+              className="md:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
+            >
               <X size={24} />
             </button>
           )}
@@ -146,47 +248,51 @@ export default function Dashboard() {
 
         <nav className="mt-4">
           {/* Projects Section */}
-          <div className={`mb-1 ${activeSection === 'projects' ? 'bg-blue-50 dark:bg-gray-700' : ''}`}>
+          <div
+            className={`mb-1 ${
+              activeSection === "projects" ? "bg-blue-50 dark:bg-gray-700" : ""
+            }`}
+          >
             <button
-              onClick={() => changeSection('projects')}
+              onClick={() => changeSection("projects")}
               className={`w-full flex items-center p-3 text-left ${
-                activeSection === 'projects' 
-                  ? 'text-blue-600 dark:text-blue-400 font-medium border-l-4 border-blue-600 dark:border-blue-400' 
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                activeSection === "projects"
+                  ? "text-blue-600 dark:text-blue-400 font-medium border-l-4 border-blue-600 dark:border-blue-400"
+                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
               }`}
             >
               <Filter size={18} className="mr-2" />
               <span>Projects</span>
             </button>
-            
-            {activeSection === 'projects' && (
+
+            {activeSection === "projects" && (
               <div className="pl-8 pr-3 py-2 space-y-1">
                 <button
-                  onClick={() => changeSection('projects', 'all')} 
+                  onClick={() => changeSection("projects", "all")}
                   className={`w-full text-left px-3 py-2 text-sm rounded ${
-                    activeSubSection === 'all' 
-                      ? 'bg-blue-100 dark:bg-gray-600 text-blue-700 dark:text-blue-100' 
-                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600'
+                    activeSubSection === "all"
+                      ? "bg-blue-100 dark:bg-gray-600 text-blue-700 dark:text-blue-100"
+                      : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600"
                   }`}
                 >
                   All Projects
                 </button>
                 <button
-                  onClick={() => changeSection('projects', 'accepted')} 
+                  onClick={() => changeSection("projects", "accepted")}
                   className={`w-full text-left px-3 py-2 text-sm rounded ${
-                    activeSubSection === 'accepted' 
-                      ? 'bg-blue-100 dark:bg-gray-600 text-blue-700 dark:text-blue-100' 
-                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600'
+                    activeSubSection === "accepted"
+                      ? "bg-blue-100 dark:bg-gray-600 text-blue-700 dark:text-blue-100"
+                      : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600"
                   }`}
                 >
                   Accepted
                 </button>
                 <button
-                  onClick={() => changeSection('projects', 'rejected')} 
+                  onClick={() => changeSection("projects", "rejected")}
                   className={`w-full text-left px-3 py-2 text-sm rounded ${
-                    activeSubSection === 'rejected' 
-                      ? 'bg-blue-100 dark:bg-gray-600 text-blue-700 dark:text-blue-100' 
-                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600'
+                    activeSubSection === "rejected"
+                      ? "bg-blue-100 dark:bg-gray-600 text-blue-700 dark:text-blue-100"
+                      : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600"
                   }`}
                 >
                   Rejected
@@ -196,37 +302,42 @@ export default function Dashboard() {
           </div>
 
           {/* Reports Section */}
-          <div className={`mb-1 ${activeSection === 'reports' ? 'bg-blue-50 dark:bg-gray-700' : ''}`}>
+          <div
+            className={`mb-1 ${
+              activeSection === "reports" ? "bg-blue-50 dark:bg-gray-700" : ""
+            }`}
+          >
             <button
-              onClick={() => changeSection('reports')}
+              onClick={() => changeSection("reports")}
               className={`w-full flex items-center p-3 text-left ${
-                activeSection === 'reports' 
-                  ? 'text-blue-600 dark:text-blue-400 font-medium border-l-4 border-blue-600 dark:border-blue-400' 
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                activeSection === "reports"
+                  ? "text-blue-600 dark:text-blue-400 font-medium border-l-4 border-blue-600 dark:border-blue-400"
+                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
               }`}
             >
               <TicketCheck size={18} className="mr-2" />
               <span>Reports</span>
             </button>
-            
-            {activeSection === 'reports' && (
+
+            {activeSection === "reports" && (
               <div className="pl-8 pr-3 py-2 space-y-1">
                 <button
-                  onClick={() => changeSection('reports', 'open')} 
+                  onClick={() => changeSection("reports", "open")}
                   className={`w-full text-left px-3 py-2 text-sm rounded ${
-                    activeSubSection === 'open' 
-                      ? 'bg-blue-100 dark:bg-gray-600 text-blue-700 dark:text-blue-100' 
-                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600'
+                    activeSubSection === "open"
+                      ? "bg-blue-100 dark:bg-gray-600 text-blue-700 dark:text-blue-100"
+                      : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600"
                   }`}
                 >
                   Open Tickets
                 </button>
+
                 <button
-                  onClick={() => changeSection('reports', 'closed')} 
+                  onClick={() => changeSection("reports", "closed")}
                   className={`w-full text-left px-3 py-2 text-sm rounded ${
-                    activeSubSection === 'closed' 
-                      ? 'bg-blue-100 dark:bg-gray-600 text-blue-700 dark:text-blue-100' 
-                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600'
+                    activeSubSection === "closed"
+                      ? "bg-blue-100 dark:bg-gray-600 text-blue-700 dark:text-blue-100"
+                      : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600"
                   }`}
                 >
                   Closed Tickets
@@ -236,37 +347,41 @@ export default function Dashboard() {
           </div>
 
           {/* Payments Section */}
-          <div className={`mb-1 ${activeSection === 'payments' ? 'bg-blue-50 dark:bg-gray-700' : ''}`}>
+          <div
+            className={`mb-1 ${
+              activeSection === "payments" ? "bg-blue-50 dark:bg-gray-700" : ""
+            }`}
+          >
             <button
-              onClick={() => changeSection('payments')}
+              onClick={() => changeSection("payments")}
               className={`w-full flex items-center p-3 text-left ${
-                activeSection === 'payments' 
-                  ? 'text-blue-600 dark:text-blue-400 font-medium border-l-4 border-blue-600 dark:border-blue-400' 
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                activeSection === "payments"
+                  ? "text-blue-600 dark:text-blue-400 font-medium border-l-4 border-blue-600 dark:border-blue-400"
+                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
               }`}
             >
               <CircleDollarSign size={18} className="mr-2" />
               <span>Payments</span>
             </button>
-            
-            {activeSection === 'payments' && (
+
+            {activeSection === "payments" && (
               <div className="pl-8 pr-3 py-2 space-y-1">
                 <button
-                  onClick={() => changeSection('payments', 'past')} 
+                  onClick={() => changeSection("payments", "past")}
                   className={`w-full text-left px-3 py-2 text-sm rounded ${
-                    activeSubSection === 'past' 
-                      ? 'bg-blue-100 dark:bg-gray-600 text-blue-700 dark:text-blue-100' 
-                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600'
+                    activeSubSection === "past"
+                      ? "bg-blue-100 dark:bg-gray-600 text-blue-700 dark:text-blue-100"
+                      : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600"
                   }`}
                 >
                   Past Payments
                 </button>
                 <button
-                  onClick={() => changeSection('payments', 'pending')} 
+                  onClick={() => changeSection("payments", "pending")}
                   className={`w-full text-left px-3 py-2 text-sm rounded ${
-                    activeSubSection === 'pending' 
-                      ? 'bg-blue-100 dark:bg-gray-600 text-blue-700 dark:text-blue-100' 
-                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600'
+                    activeSubSection === "pending"
+                      ? "bg-blue-100 dark:bg-gray-600 text-blue-700 dark:text-blue-100"
+                      : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600"
                   }`}
                 >
                   Pending
@@ -283,23 +398,23 @@ export default function Dashboard() {
         <div className="bg-white dark:bg-gray-800 shadow p-4 flex items-center justify-between">
           <div className="flex items-center">
             {isMobile && (
-              <button 
-                onClick={toggleSidebar} 
+              <button
+                onClick={toggleSidebar}
                 className="mr-4 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white"
               >
                 <Menu size={24} />
               </button>
             )}
             <h1 className="text-xl font-bold text-gray-800 dark:text-white">
-              {activeSection === 'projects' && 'Project Dashboard'}
-              {activeSection === 'reports' && 'Ticket Reports'}
-              {activeSection === 'payments' && 'Payment Management'}
+              {activeSection === "projects" && "Project Dashboard"}
+              {activeSection === "reports" && "Ticket Reports"}
+              {activeSection === "payments" && "Payment Management"}
             </h1>
           </div>
         </div>
 
         {/* Dashboard Content - Projects Section */}
-        {activeSection === 'projects' && (
+        {activeSection === "projects" && (
           <div className="p-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 space-y-4 md:space-y-0">
               <button
@@ -308,7 +423,7 @@ export default function Dashboard() {
               >
                 Add New Project
               </button>
-              
+
               <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4">
                 {/* Search Input */}
                 <div className="relative">
@@ -319,9 +434,12 @@ export default function Dashboard() {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-10 pr-4 py-2 border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
-                  <Search size={18} className="absolute left-3 top-2.5 text-gray-400" />
+                  <Search
+                    size={18}
+                    className="absolute left-3 top-2.5 text-gray-400"
+                  />
                 </div>
-                
+
                 {/* Status Filter */}
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="w-full md:w-40">
@@ -351,9 +469,13 @@ export default function Dashboard() {
                   </p>
                   <div className="flex items-center mb-1">
                     <span
-                      className={`w-3 h-3 mr-2 rounded-full ${statusStyles[project.status]} animate-pulse`}
+                      className={`w-3 h-3 mr-2 rounded-full ${
+                        statusStyles[project.status]
+                      } animate-pulse`}
                     ></span>
-                    <p className="text-gray-700 dark:text-gray-300">{project.status}</p>
+                    <p className="text-gray-700 dark:text-gray-300">
+                      {project.status}
+                    </p>
                   </div>
 
                   {/* Edit Icon */}
@@ -371,32 +493,49 @@ export default function Dashboard() {
                         <AlertDialogHeader>
                           <AlertDialogTitle>Edit Domain</AlertDialogTitle>
                           <AlertDialogDescription>
-                            You can update the domain for <strong>{selectedProject.name}</strong>.
+                            You can update the domain for{" "}
+                            <strong>{selectedProject.name}</strong>.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
 
                         <div className="mt-4 space-y-2">
                           <div className="text-sm text-gray-600 dark:text-gray-300">
-                            <strong>Project Name:</strong> {selectedProject.name}
+                            <strong>Project Name:</strong>{" "}
+                            {selectedProject.name}
                           </div>
 
-                          <Select value={newDomain} onValueChange={handleDomainChange}>
+                          <Select
+                            value={newDomain}
+                            onValueChange={handleDomainChange}
+                          >
                             <SelectTrigger className="w-full">
                               <SelectValue placeholder="Select a domain" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="Artificial Intelligence">Artificial Intelligence</SelectItem>
-                              <SelectItem value="Web Development">Web Development</SelectItem>
-                              <SelectItem value="Blockchain">Blockchain</SelectItem>
-                              <SelectItem value="Full Stack">Full Stack</SelectItem>
-                              <SelectItem value="Data Science">Data Science</SelectItem>
+                              <SelectItem value="Artificial Intelligence">
+                                Artificial Intelligence
+                              </SelectItem>
+                              <SelectItem value="Web Development">
+                                Web Development
+                              </SelectItem>
+                              <SelectItem value="Blockchain">
+                                Blockchain
+                              </SelectItem>
+                              <SelectItem value="Full Stack">
+                                Full Stack
+                              </SelectItem>
+                              <SelectItem value="Data Science">
+                                Data Science
+                              </SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
 
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={handleSave}>Save</AlertDialogAction>
+                          <AlertDialogAction onClick={handleSave}>
+                            Save
+                          </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     )}
@@ -408,63 +547,95 @@ export default function Dashboard() {
         )}
 
         {/* Dashboard Content - Reports Section */}
-        {activeSection === 'reports' && (
+        {activeSection === "reports" && (
           <div className="p-6">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-lg font-semibold">
-                {activeSubSection === 'open' ? 'Open Tickets' : 'Closed Tickets'}
+              {activeSubSection === "open"
+          ? "Open Tickets"
+          : activeSubSection === "closed"
+          ? "Closed Tickets"
+          : activeSubSection === "report"
+          ? "Report Issue"
+          : ""}
               </h2>
               <div className="flex space-x-4">
+
                 <button
-                  onClick={() => changeSection('reports', 'open')}
+                  onClick={() => changeSection("reports", "open")}
                   className={`px-4 py-2 rounded ${
-                    activeSubSection === 'open' 
-                      ? 'bg-green-600 text-white' 
-                      : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                    activeSubSection === "open"
+                      ? "bg-green-600 text-white"
+                      : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
                   }`}
                 >
                   Open
                 </button>
                 <button
-                  onClick={() => changeSection('reports', 'closed')}
+                  onClick={() => changeSection("reports", "closed")}
                   className={`px-4 py-2 rounded ${
-                    activeSubSection === 'closed' 
-                      ? 'bg-gray-600 text-white' 
-                      : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                    activeSubSection === "closed"
+                      ? "bg-gray-600 text-white"
+                      : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
                   }`}
                 >
                   Closed
                 </button>
               </div>
             </div>
-
             {/* Tickets Table */}
             <div className="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
               <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead className="bg-gray-50 dark:bg-gray-700">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ID</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Title</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Project</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Priority</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      ID
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Title
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Project
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Priority
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Status
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                   {filteredTickets.map((ticket) => (
                     <tr key={ticket.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">#{ticket.id}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{ticket.title}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">{ticket.project}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                        #{ticket.id}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                        {ticket.title}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
+                        {ticket.project}
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 py-1 text-xs rounded-full ${priorityStyles[ticket.priority]}`}>
+                        <span
+                          className={`px-2 py-1 text-xs rounded-full ${
+                            priorityStyles[ticket.priority]
+                          }`}
+                        >
                           {ticket.priority}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="flex items-center">
-                          <span className={`w-2 h-2 mr-2 rounded-full ${statusStyles[ticket.status]}`}></span>
-                          <span className="text-sm text-gray-700 dark:text-gray-300">{ticket.status}</span>
+                          <span
+                            className={`w-2 h-2 mr-2 rounded-full ${
+                              statusStyles[ticket.status]
+                            }`}
+                          ></span>
+                          <span className="text-sm text-gray-700 dark:text-gray-300">
+                            {ticket.status}
+                          </span>
                         </span>
                       </td>
                     </tr>
@@ -476,29 +647,31 @@ export default function Dashboard() {
         )}
 
         {/* Dashboard Content - Payments Section */}
-        {activeSection === 'payments' && (
+        {activeSection === "payments" && (
           <div className="p-6">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-lg font-semibold">
-                {activeSubSection === 'past' ? 'Past Payments' : 'Pending Payments'}
+                {activeSubSection === "past"
+                  ? "Past Payments"
+                  : "Pending Payments"}
               </h2>
               <div className="flex space-x-4">
                 <button
-                  onClick={() => changeSection('payments', 'past')}
+                  onClick={() => changeSection("payments", "past")}
                   className={`px-4 py-2 rounded ${
-                    activeSubSection === 'past' 
-                      ? 'bg-green-600 text-white' 
-                      : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                    activeSubSection === "past"
+                      ? "bg-green-600 text-white"
+                      : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
                   }`}
                 >
                   Completed
                 </button>
                 <button
-                  onClick={() => changeSection('payments', 'pending')}
+                  onClick={() => changeSection("payments", "pending")}
                   className={`px-4 py-2 rounded ${
-                    activeSubSection === 'pending' 
-                      ? 'bg-yellow-500 text-white' 
-                      : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+                    activeSubSection === "pending"
+                      ? "bg-yellow-500 text-white"
+                      : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
                   }`}
                 >
                   Pending
@@ -511,26 +684,48 @@ export default function Dashboard() {
               <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead className="bg-gray-50 dark:bg-gray-700">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ID</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Project</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Amount</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      ID
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Project
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Amount
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Date
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Status
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                   {filteredPayments.map((payment) => (
                     <tr key={payment.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">#{payment.id}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{payment.project}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                        #{payment.id}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                        {payment.project}
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
                         ${payment.amount.toLocaleString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">{payment.date}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
+                        {payment.date}
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="flex items-center">
-                          <span className={`w-2 h-2 mr-2 rounded-full ${statusStyles[payment.status]}`}></span>
-                          <span className="text-sm text-gray-700 dark:text-gray-300">{payment.status}</span>
+                          <span
+                            className={`w-2 h-2 mr-2 rounded-full ${
+                              statusStyles[payment.status]
+                            }`}
+                          ></span>
+                          <span className="text-sm text-gray-700 dark:text-gray-300">
+                            {payment.status}
+                          </span>
                         </span>
                       </td>
                     </tr>

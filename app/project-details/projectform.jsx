@@ -4,13 +4,14 @@ import { useState, useEffect } from "react";
 import Terms from "./Terms";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation"; // For App Router (Next.js 13+)
 
 function generateProjectId(company = "HT") {
   const now = new Date();
   const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0"); // Ensure 2-digit month
-  const date = String(now.getDate()).padStart(2, "0"); // Ensure 2-digit date
-  const projectNumber = "001"; // You can dynamically fetch the next number from a database
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const date = String(now.getDate()).padStart(2, "0");
+  const projectNumber = "001";
 
   return `${company}${date}${month}${year}${projectNumber}`;
 }
@@ -22,21 +23,43 @@ export default function ProjectDetails() {
   const [description, setDescription] = useState("");
   const [deliveryDate, setDeliveryDate] = useState("");
   const [file, setFile] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     setProjectId(generateProjectId());
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({
-      projectId,
-      domain,
-      name,
-      description,
-      deliveryDate,
-      file,
-    });
+
+    const formData = new FormData();
+    formData.append("projectId", projectId);
+    formData.append("domain", domain);
+    formData.append("name", name);
+    formData.append("description", description);
+    formData.append("deliveryDate", deliveryDate);
+    if (file) {
+      formData.append("file", file);
+    }
+
+    try {
+      const response = await fetch("/api/projects", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.status === 201) {
+        alert(data.message || "Project created successfully!");
+        router.push("/dashboard/projects"); // Redirect to desired page
+      } else {
+        alert(data.message || "Something went wrong!");
+      }
+    } catch (error) {
+      console.error("Submission error:", error);
+      alert("An error occurred while submitting the project.");
+    }
   };
 
   return (
@@ -45,7 +68,7 @@ export default function ProjectDetails() {
         Project Details
       </h1>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Project ID (Non-editable) */}
+        {/* Project ID */}
         <div>
           <label className="block text-gray-700 dark:text-gray-200 font-medium">
             Project ID
@@ -58,7 +81,7 @@ export default function ProjectDetails() {
           />
         </div>
 
-        {/* Project Domain (Dropdown) */}
+        {/* Domain */}
         <div>
           <label className="block text-gray-700 dark:text-gray-200 font-medium">
             Project Domain
@@ -77,7 +100,7 @@ export default function ProjectDetails() {
           </select>
         </div>
 
-        {/* Project Name */}
+        {/* Name */}
         <div>
           <label className="block text-gray-700 dark:text-gray-200 font-medium">
             Project Name
@@ -91,7 +114,7 @@ export default function ProjectDetails() {
           />
         </div>
 
-        {/* Project Description */}
+        {/* Description */}
         <div>
           <label className="block text-gray-700 dark:text-gray-200 font-medium">
             Project Description
@@ -105,7 +128,7 @@ export default function ProjectDetails() {
           />
         </div>
 
-        {/* File Upload (Optional) */}
+        {/* File */}
         <div>
           <label className="block text-gray-700 dark:text-gray-200 font-medium">
             Upload Documents (Optional)
@@ -117,7 +140,7 @@ export default function ProjectDetails() {
           />
         </div>
 
-        {/* Delivery Date */}
+        {/* Date */}
         <div>
           <label className="block text-gray-700 dark:text-gray-200 font-medium">
             Delivery Date
@@ -131,10 +154,10 @@ export default function ProjectDetails() {
           />
         </div>
 
-        {/* Submit Button */}
+        {/* Submit */}
         <Dialog>
           <DialogTrigger asChild>
-            <Button>Submit</Button>
+            <Button type="submit">Submit</Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px] dark:bg-gray-800 dark:text-white">
             <Terms />
