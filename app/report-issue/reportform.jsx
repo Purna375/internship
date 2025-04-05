@@ -18,8 +18,8 @@ export default function ReportIssue() {
   };
 
   return (
-    <div className="w-2xl mx-auto p-6 bg-white dark:bg-gray-800 shadow-lg rounded-md transition-colors duration-300">
-      <h1 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
+    <div className="md:w-2xl mx-auto p-6 bg-white dark:bg-gray-800 shadow-lg rounded-md transition-colors duration-300 sm:w-lg">
+      <h1 className="md:text-3xl text-center font-bold mb-4 text-gray-900 dark:text-white sm:text-2xl">
         Report an Issue
       </h1>
 
