@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation"; 
 
 export default function AuthForm() {
@@ -101,15 +101,25 @@ function RegisterForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [showOtpFields, setShowOtpFields] = useState(false);
   const [showOtpMessage, setShowOtpMessage] = useState(false);
   const [error, setError] = useState("");
+  const [otpTimer, setOtpTimer] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    let interval;
+    if (otpTimer > 0) {
+      interval = setInterval(() => setOtpTimer((prev) => prev - 1), 1000);
+    }
+    return () => clearInterval(interval);
+  }, [otpTimer]);
 
   const handleOtpChange = (value, index) => {
     if (/^\d?$/.test(value)) {
       const updatedOtp = [...otp];
       updatedOtp[index] = value;
       setOtp(updatedOtp);
-
       if (value && index < 5) {
         document.getElementById(`otp-${index + 1}`)?.focus();
       }
@@ -117,9 +127,9 @@ function RegisterForm() {
   };
 
   const handleGetOtp = () => {
+    setShowOtpFields(true);
     setShowOtpMessage(true);
-    setTimeout(() => setShowOtpMessage(false), 3000);
-  
+    setOtpTimer(30); // Start 30s timer
   };
 
   const handleRegister = async (e) => {
@@ -137,35 +147,40 @@ function RegisterForm() {
       return;
     }
 
+    setLoading(true);
     try {
       const res = await fetch("/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email,
-          password,
-          otp: fullOtp,
-        }),
+        body: JSON.stringify({ email, password, otp: fullOtp }),
       });
 
       const data = await res.json();
 
-      if (res.ok) {
+      if (res.status === 200) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("newUser", JSON.stringify(data.user));
-        const newUser = localStorage.getItm('newuser');
-        if (newUser.is_verified) {
-        router.push("/studentdetails");
-      }
-      } else {
-        setError(data.message || "Registration failed.");
+        const newUser = data.user;
+        if (newUser?.is_verified) {
+          router.push("/studentdetails");
+        }
+      } else if (res.status === 400) {
+        setError(data.error || "Invalid OTP or registration issue.");
       }
     } catch (err) {
-      setError("Something went wrong. Please try again.");
+      setError("Internal Server Error. Please try again later.");
     }
+    setLoading(false);
   };
+
+  const isFormValid =
+    email &&
+    password &&
+    confirmPassword &&
+    password === confirmPassword &&
+    otp.every((digit) => digit !== "");
 
   return (
     <form className="space-y-4" onSubmit={handleRegister}>
@@ -194,32 +209,44 @@ function RegisterForm() {
         required
       />
 
-      <div className="flex justify-between space-x-2">
-        {otp.map((digit, idx) => (
-          <input
-            key={idx}
-            id={`otp-${idx}`}
-            type="text"
-            maxLength={1}
-            value={digit}
-            onChange={(e) => handleOtpChange(e.target.value, idx)}
-            className="w-12 h-12 text-center text-lg border rounded dark:bg-gray-700 dark:text-white"
-          />
-        ))}
-      </div>
-
-      <button
-        type="button"
-        onClick={handleGetOtp}
-        className="w-full bg-yellow-500 text-white py-2 rounded hover:bg-yellow-600"
-      >
-        Get OTP
-      </button>
+      {showOtpFields && (
+        <div className="flex justify-between space-x-2">
+          {otp.map((digit, idx) => (
+            <input
+              key={idx}
+              id={`otp-${idx}`}
+              type="text"
+              maxLength={1}
+              value={digit}
+              onChange={(e) => handleOtpChange(e.target.value, idx)}
+              className="w-12 h-12 text-center text-lg border rounded dark:bg-gray-700 dark:text-white"
+            />
+          ))}
+        </div>
+      )}
 
       {showOtpMessage && (
         <div className="bg-green-100 text-green-800 p-2 rounded text-center transition-all duration-300">
-          OTP has been sent to your registered email ID.
+          OTP sent to the registered email address.
         </div>
+      )}
+
+      {otpTimer > 0 ? (
+        <button
+          type="button"
+          disabled
+          className="w-full bg-gray-400 text-white py-2 rounded cursor-not-allowed"
+        >
+          Resend OTP in {otpTimer}s
+        </button>
+      ) : (
+        <button
+          type="button"
+          onClick={handleGetOtp}
+          className="w-full dark:bg-yellow-500 text-white py-2 rounded hover:bg-yellow-600 bg-yellow-300"
+        >
+          {showOtpFields ? "Resend OTP" : "Get OTP"}
+        </button>
       )}
 
       {error && (
@@ -230,9 +257,14 @@ function RegisterForm() {
 
       <button
         type="submit"
-        className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600"
+        disabled={!isFormValid || loading}
+        className={`w-full py-2 rounded ${
+          isFormValid && !loading
+            ? "bg-green-500 hover:bg-green-600 text-white"
+            : "bg-gray-400 text-white cursor-not-allowed"
+        }`}
       >
-        Register
+        {loading ? "Registering..." : "Register"}
       </button>
     </form>
   );
