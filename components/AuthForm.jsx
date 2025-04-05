@@ -36,21 +36,37 @@ function LoginForm() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
-  const response = await fetch("/api/login", {
-      method: "POST",
-      body: JSON.stringify({ email, password }),
-      headers: { "Content-Type": "application/json" },
-    });
+    setError(""); 
 
-    const user = await response.json();
+    try {
+      const response = await fetch("/api/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+        headers: { "Content-Type": "application/json" },
+      });
 
-    if (user.projects === 0) {
-      router.push("/projectdetails");
-    } else {
-      router.push("/dashboard");
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Login failed");
+      }
+
+      const { user, token } = data;
+
+          localStorage.setItem("token", token);
+          localStorage.setItem("user", JSON.stringify(user));
+      if (!user.hasProjects) {
+        router.push("/projectdetails");
+      } else {
+        router.push("/dashboard");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      setError(err.message);
     }
   };
 
@@ -70,6 +86,7 @@ function LoginForm() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
+      {error && <p className="text-red-500 text-sm">{error}</p>}
       <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
         Login
       </button>
@@ -80,13 +97,12 @@ function LoginForm() {
 
 function RegisterForm() {
   const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [showOtpMessage, setShowOtpMessage] = useState(false);
-
-  const handleRegister = (e) => {
-    e.preventDefault();
-    router.push("/studentdetails");
-  };
+  const [error, setError] = useState("");
 
   const handleOtpChange = (value, index) => {
     if (/^\d?$/.test(value)) {
@@ -102,7 +118,53 @@ function RegisterForm() {
 
   const handleGetOtp = () => {
     setShowOtpMessage(true);
-    setTimeout(() => setShowOtpMessage(false), 3000); 
+    setTimeout(() => setShowOtpMessage(false), 3000);
+  
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    const fullOtp = otp.join("");
+    if (fullOtp.length < 6) {
+      setError("Enter complete 6-digit OTP.");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          otp: fullOtp,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("newUser", JSON.stringify(data.user));
+        const newUser = localStorage.getItm('newuser');
+        if (newUser.is_verified) {
+        router.push("/studentdetails");
+      }
+      } else {
+        setError(data.message || "Registration failed.");
+      }
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
+    }
   };
 
   return (
@@ -111,17 +173,27 @@ function RegisterForm() {
         type="email"
         placeholder="Email"
         className="w-full p-2 border rounded dark:bg-gray-700 dark:text-white"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
       />
       <input
         type="password"
         placeholder="Password"
         className="w-full p-2 border rounded dark:bg-gray-700 dark:text-white"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
       />
       <input
         type="password"
         placeholder="Confirm Password"
         className="w-full p-2 border rounded dark:bg-gray-700 dark:text-white"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+        required
       />
+
       <div className="flex justify-between space-x-2">
         {otp.map((digit, idx) => (
           <input
@@ -143,10 +215,16 @@ function RegisterForm() {
       >
         Get OTP
       </button>
-      
+
       {showOtpMessage && (
         <div className="bg-green-100 text-green-800 p-2 rounded text-center transition-all duration-300">
           OTP has been sent to your registered email ID.
+        </div>
+      )}
+
+      {error && (
+        <div className="bg-red-100 text-red-800 p-2 rounded text-center transition-all duration-300">
+          {error}
         </div>
       )}
 

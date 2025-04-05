@@ -13,6 +13,7 @@ export default function Dashboard() {
     { id: 1, name: "AI Assistant", domain: "Artificial Intelligence", status: "Pending Acceptance" },
     { id: 2, name: "Web App", domain: "Full Stack", status: "Accepted & Payment Pending" },
     { id: 3, name: "Blockchain Project", domain: "Blockchain", status: "Payment Completed" },
+    { id: 4, name: "Ml Project", domain: "AIML", status: "Rejected" },
   ]);
 
   const [selectedProject, setSelectedProject] = useState(null);
@@ -38,13 +39,14 @@ export default function Dashboard() {
         p.id === selectedProject.id ? { ...p, domain: newDomain } : p
       )
     );
-    setSelectedProject(null); // close dialog
+    setSelectedProject(null);
   };
 
   const statusStyles = {
     "Pending Acceptance": "bg-yellow-500",
     "Accepted & Payment Pending": "bg-blue-500",
     "Payment Completed": "bg-green-500",
+    "Rejected": "bg-red-500",
   };
 
   return (

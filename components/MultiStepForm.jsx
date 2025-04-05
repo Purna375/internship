@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
+import { useRouter } from "next/navigation";
+
 
 const domains = [
   { name: "Web Development", pdf: "/pdfs/web-development.pdf" },
@@ -52,16 +54,20 @@ export default function MultiStepForm() {
   const prevStep = () => {
     if (step > 1) setStep(step - 1);
   };
-
-  const onSubmit = (data) => {
-    setIsSubmitting(true);
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Final Data:", { ...data, selectedDomain });
-      alert("Form submitted successfully!");
-      setIsSubmitting(false);
-    }, 1000);
-  };
+  const router = useRouter(); 
+    const onSubmit = (data) => {
+      setIsSubmitting(true);
+    
+      // Simulate API call
+      setTimeout(() => {
+        console.log("Final Data:", { ...data, selectedDomain });
+    
+        setIsSubmitting(false);
+    
+        // ✅ Redirect after everything is done
+        router.push('/project-details');
+      }, 1000);
+    };
 
   return (
     <div className="w-xl mx-auto p-8 bg-white dark:bg-gray-800 shadow-xl rounded-lg border border-gray-200 dark:border-gray-700">
