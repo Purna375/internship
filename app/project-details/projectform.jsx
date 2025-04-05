@@ -63,14 +63,14 @@ export default function ProjectDetails() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-4 sm:p-6 bg-white dark:bg-gray-900 shadow-lg rounded-md transition-colors duration-300 border dark:border-gray-700 border-gray-300">
-      <h1 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
-        Project Details
+    <div className="sm:max-w-2xl md:max-w-3xl lg:w-3xl mx-auto p-6 sm:p-6 bg-white dark:bg-gray-900 shadow-lg rounded-md transition-colors duration-300 border dark:border-gray-700 border-gray-300">
+      <h1 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white text-center">
+        PROJECT DETAILS
       </h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Project ID */}
         <div>
-          <label className="block text-gray-700 dark:text-gray-200 font-medium">
+          <label className="block text-gray-700 dark:text-gray-200 font-medium mb-2">
             Project ID
           </label>
           <input
@@ -83,7 +83,7 @@ export default function ProjectDetails() {
 
         {/* Domain */}
         <div>
-          <label className="block text-gray-700 dark:text-gray-200 font-medium">
+          <label className="block text-gray-700 dark:text-gray-200 font-medium mb-2">
             Project Domain
           </label>
           <select
@@ -101,22 +101,22 @@ export default function ProjectDetails() {
         </div>
 
         {/* Name */}
-        <div className="flex flex-col md:flex-row md:items-center gap-2">
-          <label className="md:w-1/4 block text-gray-700 dark:text-gray-200 font-medium">
+        <div>
+          <label className="block text-gray-700 dark:text-gray-200 font-medium mb-2">
             Project Name
           </label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full md:w-3/4 p-2 border bg-gray-100 dark:bg-gray-800 dark:text-white rounded"
+            className="w-full p-2 border bg-gray-100 dark:bg-gray-800 dark:text-white rounded"
             required
           />
         </div>
 
         {/* Description */}
         <div>
-          <label className="block text-gray-700 dark:text-gray-200 font-medium">
+          <label className="block text-gray-700 dark:text-gray-200 font-medium mb-2">
             Project Description
           </label>
           <textarea
@@ -130,7 +130,7 @@ export default function ProjectDetails() {
 
         {/* File */}
         <div>
-          <label className="block text-gray-700 dark:text-gray-200 font-medium">
+          <label className="block text-gray-700 dark:text-gray-200 font-medium mb-2">
             Upload Documents (Optional)
           </label>
           <input
@@ -142,7 +142,7 @@ export default function ProjectDetails() {
 
         {/* Date */}
         <div>
-          <label className="block text-gray-700 dark:text-gray-200 font-medium">
+          <label className="block text-gray-700 dark:text-gray-200 font-medium mb-2">
             Delivery Date
           </label>
           <input
@@ -157,7 +157,7 @@ export default function ProjectDetails() {
         {/* Submit */}
         <Dialog>
           <DialogTrigger asChild>
-            <Button type="submit">Submit</Button>
+            <Button type="submit" className="flex justify-center items-center ">Submit</Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px] dark:bg-gray-800 dark:text-white">
             <Terms />

@@ -455,11 +455,8 @@ export default function Dashboard() {
             </div>
 
             {activeSubSection === "newproject" ? (
-              <div className="p-4 sm:p-6 md:p-8 lg:p-10">
-              <div className="max-w-2xl mx-auto">
                 <ProjectDetails />
-              </div>
-            </div>
+           
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredProjects.map((project) => (
@@ -495,6 +492,7 @@ export default function Dashboard() {
                         </button>
                       </AlertDialogTrigger>
                       {selectedProject?.id === project.id && (
+                        <div className="dark:bg-gray-800 ">
                         <AlertDialogContent>
                           <AlertDialogHeader>
                             <AlertDialogTitle>Edit Domain</AlertDialogTitle>
@@ -544,6 +542,7 @@ export default function Dashboard() {
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
+                        </div>
                       )}
                     </AlertDialog>
                   </div>
